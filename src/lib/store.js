@@ -9,11 +9,13 @@
 
 import { TEMPLATES as BUILTIN_TEMPLATES } from './templateSchema.js'
 import { TEXT_LIBRARY_SEED } from '../data/textLibrary.js'
+import { ELECTION_SEED } from '../data/electionData.js'
 
 const KEYS = {
   templates: 'gs.templates.v2',
   textLibrary: 'gs.textLibrary.v2',
   categories: 'gs.categories.v1',
+  elections: 'gs.elections.v1',
   role: 'gs.role.v1',
 }
 
@@ -150,6 +152,32 @@ export function pickText(category, { kind = null, random = true, seed } = {}) {
   if (!random) return list[0]
   const i = seed != null ? Math.abs(seed) % list.length : Math.floor(Math.random() * list.length)
   return list[i]
+}
+
+// --- Election records (booth-wise, from Form 20) -----------------------------
+
+export function getElectionRecords() {
+  const saved = readJSON(KEYS.elections)
+  if (Array.isArray(saved) && saved.length) return saved
+  const seed = structuredClone(ELECTION_SEED)
+  writeJSON(KEYS.elections, seed)
+  return seed
+}
+export function saveElectionRecords(records) {
+  writeJSON(KEYS.elections, records)
+  return records
+}
+export function resetElectionRecords() {
+  const seed = structuredClone(ELECTION_SEED)
+  writeJSON(KEYS.elections, seed)
+  return seed
+}
+export function exportElectionRecordsJSON() {
+  return JSON.stringify(getElectionRecords(), null, 2)
+}
+/** Records for a single booth name (used by the karyakarta's own-booth card). */
+export function getBoothRecord(boothName) {
+  return getElectionRecords().find((b) => b.booth === boothName) || null
 }
 
 // --- Karyakarta's saved cutout photos (local reuse) --------------------------

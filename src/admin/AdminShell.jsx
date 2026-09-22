@@ -2,6 +2,7 @@ import { useState } from 'react'
 import PosterStudio from './PosterStudio.jsx'
 import TextLibraryManager from './TextLibraryManager.jsx'
 import PostersManager from './PostersManager.jsx'
+import ElectionRecords from './ElectionRecords.jsx'
 import TricolourBar from '../components/TricolourBar.jsx'
 import { MountainMark } from '../components/icons.jsx'
 import { useLang, LanguageToggle } from '../lib/i18n.jsx'
@@ -36,6 +37,7 @@ export default function AdminShell({ onExit }) {
         {tabBtn('files', t('tabPosters'))}
         {tabBtn('editor', t('tabStudio'))}
         {tabBtn('text', t('tabText'))}
+        {tabBtn('elections', t('tabElections'))}
         <div className="ml-auto flex items-center gap-2">
           <LanguageToggle />
           <button onClick={onExit} className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-50">
@@ -47,6 +49,7 @@ export default function AdminShell({ onExit }) {
         {tab === 'files' && <PostersManager onEdit={editPoster} />}
         {tab === 'editor' && <PosterStudio key={editId || 'new'} initialTemplateId={editId} />}
         {tab === 'text' && <TextLibraryManager />}
+        {tab === 'elections' && <ElectionRecords />}
       </div>
     </div>
   )
