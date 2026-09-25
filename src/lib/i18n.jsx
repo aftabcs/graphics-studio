@@ -124,26 +124,6 @@ const STR = {
   align: { en: 'Align', hi: 'संरेखण' },
   fillsAuto: { en: 'Fills automatically at generation.', hi: 'जनरेशन के समय अपने आप भर जाता है।' },
 
-  // Admin — election records
-  tabElections: { en: 'Election Records', hi: 'चुनावी रिकॉर्ड' },
-  uploadForm20: { en: 'Upload Form 20 (Excel/CSV)', hi: 'फॉर्म 20 अपलोड करें (Excel/CSV)' },
-  boothsWord: { en: 'booths', hi: 'बूथ' },
-  tagSwingLabel: { en: 'Swing', hi: 'स्विंग' },
-  tagLeaningLabel: { en: 'Leaning', hi: 'झुकाव' },
-  tagSafeLabel: { en: 'Consistent', hi: 'स्थिर' },
-  allBooths: { en: 'All', hi: 'सभी' },
-  searchBooth: { en: 'Search booth / village…', hi: 'बूथ / गाँव खोजें…' },
-  winnerWord: { en: 'Winner', hi: 'विजेता' },
-  marginWord: { en: 'Margin', hi: 'अंतर' },
-  turnoutWord: { en: 'Votes', hi: 'कुल वोट' },
-  yearWord: { en: 'Year', hi: 'वर्ष' },
-  boothWord: { en: 'Booth', hi: 'बूथ' },
-  villageWord: { en: 'Village', hi: 'गाँव' },
-  trendWord: { en: 'Winners by year', hi: 'वर्षवार विजेता' },
-  noElectionData: { en: 'No records yet. Upload Form 20 or load the sample.', hi: 'अभी कोई रिकॉर्ड नहीं। फॉर्म 20 अपलोड करें या सैंपल लोड करें।' },
-  boothHistoryTitle: { en: 'Your booth — past results', hi: 'आपका बूथ — पिछले नतीजे' },
-  noBoothHistory: { en: 'No past results for your booth yet.', hi: 'आपके बूथ के पिछले नतीजे अभी उपलब्ध नहीं।' },
-
   // Admin — text library
   uploadExcel: { en: 'Upload Excel / CSV', hi: 'एक्सेल / CSV अपलोड करें' },
   downloadTemplate: { en: 'Download template', hi: 'टेम्पलेट डाउनलोड करें' },

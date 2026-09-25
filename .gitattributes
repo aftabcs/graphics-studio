@@ -1,0 +1,8 @@
+# Self-hosted ML model + WASM chunks (offline background removal): raw binary,
+# never apply EOL/text conversion or Git would corrupt the model on checkout.
+public/imgly/** binary
+public/imgly/resources.json text eol=lf
+
+# Font binaries (if ever committed) stay binary.
+*.woff2 binary
+*.woff binary

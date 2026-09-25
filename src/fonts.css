@@ -1,0 +1,41 @@
+/**
+ * Self-hosted fonts (fully offline) — bundled via @fontsource so the app never
+ * calls Google Fonts. Weights mirror what the poster compositor + UI use.
+ * Replaces the previous <link> to fonts.googleapis.com in index.html.
+ */
+
+/* UI + default body */
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+
+/* Devanagari body / clean default */
+@import '@fontsource/noto-sans-devanagari/400.css';
+@import '@fontsource/noto-sans-devanagari/500.css';
+@import '@fontsource/noto-sans-devanagari/600.css';
+@import '@fontsource/noto-sans-devanagari/700.css';
+
+/* Poster display faces (admin font picker) */
+@import '@fontsource/baloo-2/400.css';
+@import '@fontsource/baloo-2/500.css';
+@import '@fontsource/baloo-2/600.css';
+@import '@fontsource/baloo-2/700.css';
+@import '@fontsource/baloo-2/800.css';
+
+@import '@fontsource/rozha-one/400.css';
+@import '@fontsource/tiro-devanagari-hindi/400.css';
+
+@import '@fontsource/mukta/400.css';
+@import '@fontsource/mukta/600.css';
+@import '@fontsource/mukta/700.css';
+
+@import '@fontsource/anek-devanagari/400.css';
+@import '@fontsource/anek-devanagari/600.css';
+@import '@fontsource/anek-devanagari/700.css';
+@import '@fontsource/anek-devanagari/800.css';
+
+@import '@fontsource/yatra-one/400.css';
+
+@import '@fontsource/kalam/400.css';
+@import '@fontsource/kalam/700.css';

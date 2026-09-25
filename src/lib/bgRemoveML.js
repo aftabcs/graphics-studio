@@ -2,8 +2,8 @@
  * On-device ML background removal via @imgly/background-removal.
  * Dynamically imported so the (large) library + model only load when a photo is
  * actually processed — never in the initial bundle. Runs entirely in the
- * browser; the photo never leaves the device. The model is fetched once from a
- * CDN and cached by the browser, so subsequent runs work offline.
+ * browser; the photo never leaves the device. The model + WASM are self-hosted
+ * in /public/imgly/, so it runs fully offline with no CDN calls (see mlConfig).
  *
  * Speed: (1) the input is downscaled first — inference time scales with pixel
  * count, and a karyakarta slot on a poster never needs full-res; (2) it runs on
@@ -37,8 +37,14 @@ function blobToDataUrl(blob) {
   })
 }
 
+// Self-hosted model + WASM (fully offline). The isnet_fp16 model and onnxruntime
+// WASM live in /public/imgly/ (with resources.json), so the app never fetches
+// from the @imgly CDN — first run and every run work with no internet.
+const LOCAL_ASSETS = (typeof location !== 'undefined' ? location.origin : '') + '/imgly/'
+
 const mlConfig = () => ({
   model: 'isnet_fp16',
+  publicPath: LOCAL_ASSETS,
   device: typeof navigator !== 'undefined' && navigator.gpu ? 'gpu' : undefined,
 })
 

@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import GatingBanner from './components/GatingBanner.jsx'
 import PosterThumb from './components/PosterThumb.jsx'
 import GenerateModal from './components/GenerateModal.jsx'
-import BoothHistoryCard from './components/BoothHistoryCard.jsx'
 import TricolourBar from './components/TricolourBar.jsx'
 import { MountainMark } from './components/icons.jsx'
 import { useLang, LanguageToggle } from './lib/i18n.jsx'
@@ -93,8 +92,6 @@ export default function KaryakartaStudio() {
         </div>
 
         {!unlocked && <p className="mt-4 text-xs text-slate-400">{t('lockedNote')}</p>}
-
-        <BoothHistoryCard booth={studio.karyakarta.booth} />
       </div>
 
       {chosen && unlocked && (
