@@ -15,9 +15,13 @@ const KEYS = {
   textLibrary: 'gs.textLibrary.v2',
   categories: 'gs.categories.v1',
   role: 'gs.role.v1',
+  freeUsed: 'gs.freeUsed.v1',
 }
 
 const DEFAULT_CATEGORIES = ['Booth Issues', 'Manifesto', 'General']
+
+/** Free graphics a karyakarta can generate before the reward gate applies. */
+export const FREE_GRAPHICS_LIMIT = 4
 
 function readJSON(key) {
   try {
@@ -178,6 +182,20 @@ export function saveMyPhoto(dataUrl) {
 export function deleteMyPhoto(dataUrl) {
   const next = getMyPhotos().filter((p) => p !== dataUrl)
   writeJSON(MY_PHOTOS_KEY, next)
+  return next
+}
+
+// --- Free-graphics trial (reward gate) ---------------------------------------
+
+/** How many graphics the karyakarta has generated (persists across sessions). */
+export function getFreeGraphicsUsed() {
+  const n = Number(localStorage.getItem(KEYS.freeUsed))
+  return Number.isFinite(n) && n > 0 ? n : 0
+}
+/** Count one generated graphic; returns the new total. */
+export function incrementFreeGraphicsUsed() {
+  const next = getFreeGraphicsUsed() + 1
+  localStorage.setItem(KEYS.freeUsed, String(next))
   return next
 }
 

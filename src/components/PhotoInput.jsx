@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { CameraIcon, UploadIcon, CloseIcon, CheckIcon } from './icons.jsx'
+import { CameraIcon, UploadIcon, CloseIcon, CheckIcon, UserIcon } from './icons.jsx'
 import { fileToPngDataUrl, removeBgFromDataUrl } from '../lib/compositor.js'
 import { mlRemoveBackground } from '../lib/bgRemoveML.js'
 import { getMyPhotos, saveMyPhoto, deleteMyPhoto } from '../lib/store.js'
@@ -145,7 +145,9 @@ export default function PhotoInput({ value, onChange }) {
           {value ? (
             <img src={value} alt="karyakarta" className="h-full w-full object-cover" />
           ) : (
-            <div className="flex h-full w-full items-center justify-center text-[10px] text-slate-400">{t('noPhoto')}</div>
+            <div className="flex h-full w-full items-center justify-center text-slate-300" title={t('noPhoto')}>
+              <UserIcon className="h-10 w-10" />
+            </div>
           )}
         </div>
         <div className="flex flex-col gap-2">

@@ -2,11 +2,24 @@ import { LockIcon } from './icons.jsx'
 import { useLang } from '../lib/i18n.jsx'
 
 /**
- * The reward gate. Shows only while the studio is locked. Explains what must be
- * done and reflects live daily progress. Disappears once unlocked.
+ * The reward gate. While the karyakarta still has free graphics, this shows a
+ * friendly trial notice; once those run out it shows the locked state with the
+ * daily-task progress. Disappears entirely once fully unlocked.
  */
-export default function GatingBanner({ progress }) {
+export default function GatingBanner({ progress, freeLeft = 0 }) {
   const { t, lang } = useLang()
+
+  if (freeLeft > 0) {
+    return (
+      <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50/70 px-5 py-4">
+        <div className={lang === 'hi' ? 'devanagari' : ''}>
+          <p className="text-sm font-semibold text-emerald-900">{t('freeLeft', { n: freeLeft })}</p>
+          <p className="mt-1 text-sm text-emerald-800">{t('freeTrialBody')}</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50/70 px-5 py-4">
       <div className="flex gap-3">

@@ -384,6 +384,10 @@ export function renderTemplate(canvas, template, format, images, fields, opts = 
         ctx.rotate(rot)
         ctx.translate(-(x + w / 2), -(y + h / 2))
       }
+      // Per-slot user transform (karyakarta can zoom/rotate/flip/reposition their
+      // photo within its slot at generate time). Only the image moves; the slot
+      // frame/border stays put, and the photo is clipped to the slot box.
+      const adj = (layer.slot && opts.adjust && opts.adjust[layer.slot]) || null
       ctx.save()
       if (layer.shape === 'circle') {
         ctx.beginPath()
@@ -392,6 +396,18 @@ export function renderTemplate(canvas, template, format, images, fields, opts = 
       } else if (layer.radius) {
         roundRect(ctx, x, y, w, h, layer.radius * W)
         ctx.clip()
+      } else if (adj) {
+        ctx.beginPath()
+        ctx.rect(x, y, w, h)
+        ctx.clip()
+      }
+      if (adj) {
+        const cx = x + w / 2
+        const cy = y + h / 2
+        ctx.translate(cx + (adj.offsetX || 0) * w, cy + (adj.offsetY || 0) * h)
+        ctx.rotate(((adj.rotate || 0) * Math.PI) / 180)
+        ctx.scale((adj.flipH ? -1 : 1) * (adj.scale || 1), (adj.flipV ? -1 : 1) * (adj.scale || 1))
+        ctx.translate(-cx, -cy)
       }
       if (img) {
         drawImageBox(ctx, img, x, y, w, h, layer.fit)

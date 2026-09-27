@@ -46,6 +46,21 @@ const STR = {
   poster: { en: 'Poster', hi: 'पोस्टर' },
   whatsapp: { en: 'WhatsApp', hi: 'व्हाट्सऐप' },
 
+  adjustPhoto: { en: 'Adjust photo', hi: 'फोटो समायोजित करें' },
+  sizeLabel: { en: 'Size', hi: 'आकार' },
+  rotateLabel: { en: 'Rotate', hi: 'घुमाएँ' },
+  moveXLabel: { en: 'Move ↔', hi: 'खिसकाएँ ↔' },
+  moveYLabel: { en: 'Move ↕', hi: 'खिसकाएँ ↕' },
+  flipHLabel: { en: 'Flip ↔', hi: 'पलटें ↔' },
+  flipVLabel: { en: 'Flip ↕', hi: 'पलटें ↕' },
+  rotate90: { en: '90°', hi: '90°' },
+
+  freeLeft: { en: '{n} free graphics left', hi: '{n} मुफ़्त ग्राफ़िक शेष' },
+  freeTrialBody: {
+    en: 'Generate now — free of tasks. Once your free graphics run out, finish your daily voter and issue work to keep generating.',
+    hi: 'अभी बनाएँ — बिना कार्य के। मुफ़्त ग्राफ़िक समाप्त होने पर, जनरेट जारी रखने हेतु आज का मतदाता व समस्या कार्य पूरा करें।',
+  },
+
   uploadPhoto: { en: 'Upload photo', hi: 'फोटो अपलोड करें' },
   clickPhoto: { en: 'Click photo', hi: 'फोटो खींचें' },
   noPhoto: { en: 'No photo', hi: 'कोई फोटो नहीं' },
@@ -54,7 +69,7 @@ const STR = {
   removeBg: { en: 'Remove background', hi: 'बैकग्राउंड हटाएँ' },
   bgStrength: { en: 'Background removal strength', hi: 'बैकग्राउंड हटाने की तीव्रता' },
   bgHint: { en: 'Slide to fine-tune the cutout for your photo.', hi: 'अपनी फोटो के लिए कटआउट को समायोजित करने हेतु स्लाइड करें।' },
-  bgOnDevice: { en: 'Cleaned automatically on your device (first use downloads a small model).', hi: 'आपके डिवाइस पर अपने आप साफ़ किया जाता है (पहली बार एक छोटा मॉडल डाउनलोड होता है)।' },
+  bgOnDevice: { en: 'Cleaned automatically on your device — works offline.', hi: 'आपके डिवाइस पर अपने आप साफ़ किया जाता है — ऑफ़लाइन काम करता है।' },
   savePhoto: { en: 'Save this photo', hi: 'यह फ़ोटो सेव करें' },
   savedWord: { en: 'Saved ✓', hi: 'सेव हो गया ✓' },
   savedPhotos: { en: 'Your saved photos (tap to reuse)', hi: 'आपकी सेव की गई फ़ोटो (दोबारा उपयोग हेतु टैप करें)' },

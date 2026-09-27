@@ -14,18 +14,71 @@ function libraryPhotoSrc(item) {
   return item.src || photoPlaceholder(item.label, item.category)
 }
 
+// Per-photo transform the karyakarta can tweak within a slot.
+const DEFAULT_ADJUST = { scale: 1, rotate: 0, flipH: false, flipV: false, offsetX: 0, offsetY: 0 }
+const normDeg = (d) => (((d + 180) % 360) + 360) % 360 - 180
+
+/** Size / rotate / flip / reposition controls for one photo slot. */
+function AdjustPanel({ value, onChange, t }) {
+  const set = (patch) => onChange({ ...value, ...patch })
+  const btn = 'rounded-md border px-2.5 py-1 text-[11px] font-medium'
+  const off = 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+  const on = 'border-[#12306e] bg-[#12306e] text-white'
+  const lbl = 'block text-[11px] font-medium text-slate-500'
+  return (
+    <div className="mt-2 space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-semibold text-slate-600">{t('adjustPhoto')}</span>
+        <button type="button" onClick={() => onChange({ ...DEFAULT_ADJUST })} className="text-[11px] text-slate-500 underline hover:text-slate-700">
+          {t('resetWord')}
+        </button>
+      </div>
+      <label className={lbl}>
+        {t('sizeLabel')}
+        <input type="range" min="0.4" max="2.5" step="0.05" value={value.scale}
+          onChange={(e) => set({ scale: +e.target.value })} className="mt-1 w-full accent-[#12306e]" />
+      </label>
+      <label className={lbl}>
+        {t('rotateLabel')} ({Math.round(value.rotate)}°)
+        <input type="range" min="-180" max="180" step="1" value={value.rotate}
+          onChange={(e) => set({ rotate: +e.target.value })} className="mt-1 w-full accent-[#12306e]" />
+      </label>
+      <div className="grid grid-cols-2 gap-2">
+        <label className={lbl}>
+          {t('moveXLabel')}
+          <input type="range" min="-0.5" max="0.5" step="0.02" value={value.offsetX}
+            onChange={(e) => set({ offsetX: +e.target.value })} className="mt-1 w-full accent-[#12306e]" />
+        </label>
+        <label className={lbl}>
+          {t('moveYLabel')}
+          <input type="range" min="-0.5" max="0.5" step="0.02" value={value.offsetY}
+            onChange={(e) => set({ offsetY: +e.target.value })} className="mt-1 w-full accent-[#12306e]" />
+        </label>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <button type="button" onClick={() => set({ rotate: normDeg((value.rotate || 0) + 90) })} className={`${btn} ${off}`}>{t('rotate90')}</button>
+        <button type="button" onClick={() => set({ flipH: !value.flipH })} className={`${btn} ${value.flipH ? on : off}`}>{t('flipHLabel')}</button>
+        <button type="button" onClick={() => set({ flipV: !value.flipV })} className={`${btn} ${value.flipV ? on : off}`}>{t('flipVLabel')}</button>
+      </div>
+    </div>
+  )
+}
+
 /**
  * Simple fill flow: add the two photos (yours + the issue). Everything else —
  * name, village, headline — fills automatically. Then download.
  */
-export default function GenerateModal({ template, karyakarta, onClose }) {
+export default function GenerateModal({ template, karyakarta, onGenerated, onClose }) {
   const { t } = useLang()
   const library = getIssuePhotoLibrary()
   const issues = useMemo(() => getIssues(), [])
   const canvasRef = useRef(null)
   const fmt = templateFormat(template) // native size of this poster
+  const countedRef = useRef(false) // spend one free credit per design, not per download
 
   const [karyakartaPhoto, setKaryakartaPhoto] = useState('')
+  const [kAdjust, setKAdjust] = useState(DEFAULT_ADJUST)
+  const [iAdjust, setIAdjust] = useState(DEFAULT_ADJUST)
   const [selectedIssueId, setSelectedIssueId] = useState(issues[0]?.id || null)
   const [issuePhotoId, setIssuePhotoId] = useState(issues[0]?.photoId || null)
   const [issueUpload, setIssueUpload] = useState('')
@@ -70,16 +123,20 @@ export default function GenerateModal({ template, karyakarta, onClose }) {
     () => ({ ...resolveFields(selectedIssue, karyakarta), title, description }),
     [selectedIssue, karyakarta, title, description],
   )
+  const adjust = useMemo(
+    () => ({ karyakartaPhoto: kAdjust, issuePhoto: iAdjust }),
+    [kAdjust, iAdjust],
+  )
 
   useEffect(() => {
     let cancelled = false
     setRendering(true)
-    composeToCanvas(canvasRef.current, template, fmt, { karyakartaPhoto: karyakartaSrc, issuePhoto: issueSrc }, fields)
+    composeToCanvas(canvasRef.current, template, fmt, { karyakartaPhoto: karyakartaSrc, issuePhoto: issueSrc }, fields, { adjust })
       .catch(() => {})
       .finally(() => !cancelled && setRendering(false))
     return () => { cancelled = true }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [template.id, karyakartaSrc, issueSrc, title, description])
+  }, [template.id, karyakartaSrc, issueSrc, title, description, adjust])
 
   async function onIssueUpload(e) {
     const file = e.target.files?.[0]
@@ -90,15 +147,21 @@ export default function GenerateModal({ template, karyakarta, onClose }) {
 
   async function renderNative() {
     const canvas = document.createElement('canvas')
-    await composeToCanvas(canvas, template, fmt, { karyakartaPhoto: karyakartaSrc, issuePhoto: issueSrc }, fields)
+    await composeToCanvas(canvas, template, fmt, { karyakartaPhoto: karyakartaSrc, issuePhoto: issueSrc }, fields, { adjust })
     return canvas
+  }
+  // One design = one free credit, whether they download Poster, WhatsApp, or both.
+  function countOnce() {
+    if (!countedRef.current) { countedRef.current = true; onGenerated?.() }
   }
   async function downloadPoster() {
     downloadCanvasPng(await renderNative(), 'poster.png')
+    countOnce()
   }
   async function downloadWhatsApp() {
     // Fit the poster (native aspect) onto a 9:16 status canvas, no distortion.
     downloadCanvasPng(fitOnto(await renderNative(), 1080, 1920, '#ffffff'), 'poster-whatsapp.png')
+    countOnce()
   }
 
   return (
@@ -135,6 +198,7 @@ export default function GenerateModal({ template, karyakarta, onClose }) {
             <section>
               <h3 className="mb-2 text-sm font-semibold text-slate-800">{t('yourPhoto')}</h3>
               <PhotoInput value={karyakartaPhoto} onChange={setKaryakartaPhoto} />
+              {karyakartaPhoto && <AdjustPanel value={kAdjust} onChange={setKAdjust} t={t} />}
             </section>
 
             <section>
@@ -164,6 +228,7 @@ export default function GenerateModal({ template, karyakarta, onClose }) {
                 ))}
               </div>
               <p className="mt-3 text-xs text-slate-400">{t('autoFillNote')}</p>
+              {issueSrc && <AdjustPanel value={iAdjust} onChange={setIAdjust} t={t} />}
             </section>
 
             <section>

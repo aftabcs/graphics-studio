@@ -6,7 +6,7 @@ import TricolourBar from './components/TricolourBar.jsx'
 import { MountainMark } from './components/icons.jsx'
 import { useLang, LanguageToggle } from './lib/i18n.jsx'
 import { getStudioState, isStudioUnlocked } from './data/mockData.js'
-import { getLiveTemplates, pickText } from './lib/store.js'
+import { getLiveTemplates, pickText, getFreeGraphicsUsed, incrementFreeGraphicsUsed, FREE_GRAPHICS_LIMIT } from './lib/store.js'
 
 /**
  * The entire app: pick a ready-made poster, add two photos, download.
@@ -23,7 +23,15 @@ export default function KaryakartaStudio() {
   )
 
   const [demoUnlock, setDemoUnlock] = useState(false)
-  const unlocked = demoUnlock || isStudioUnlocked(studio.progress)
+  const [freeUsed, setFreeUsed] = useState(() => getFreeGraphicsUsed())
+  // Fully unlocked when daily tasks are done (or demo). Otherwise the first few
+  // graphics are still free; after that the reward gate applies.
+  const taskUnlocked = demoUnlock || isStudioUnlocked(studio.progress)
+  const freeLeft = Math.max(0, FREE_GRAPHICS_LIMIT - freeUsed)
+  const unlocked = taskUnlocked || freeLeft > 0
+  // A generated graphic only spends a free credit when the karyakarta is relying
+  // on the trial (not when tasks are already complete).
+  const onGenerated = () => { if (!taskUnlocked) setFreeUsed(incrementFreeGraphicsUsed()) }
   const [chosen, setChosen] = useState(null)
   const [catFilter, setCatFilter] = useState('all')
   const shown = catFilter === 'all' ? templates : templates.filter((t) => t.category === catFilter)
@@ -56,7 +64,7 @@ export default function KaryakartaStudio() {
           </div>
         </header>
 
-        {!unlocked && <GatingBanner progress={studio.progress} />}
+        {!taskUnlocked && <GatingBanner progress={studio.progress} freeLeft={freeLeft} />}
 
         <h2 className="mb-3 text-sm font-semibold text-slate-900">{t('choosePoster')}</h2>
 
@@ -94,8 +102,16 @@ export default function KaryakartaStudio() {
         {!unlocked && <p className="mt-4 text-xs text-slate-400">{t('lockedNote')}</p>}
       </div>
 
-      {chosen && unlocked && (
-        <GenerateModal template={chosen} karyakarta={studio.karyakarta} onClose={() => setChosen(null)} />
+      {/* Opening is gated by the disabled thumbs; once open, keep the modal until
+          the karyakarta closes it (so spending the last free credit mid-session
+          doesn't yank the window away). */}
+      {chosen && (
+        <GenerateModal
+          template={chosen}
+          karyakarta={studio.karyakarta}
+          onGenerated={onGenerated}
+          onClose={() => setChosen(null)}
+        />
       )}
     </div>
   )
